@@ -1,2 +1,84 @@
-.lewis-date-picker{
+.popper-overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: black;
+    opacity: .2;
+    z-index: 800;
+}
+
+.date-picker-modal {
+    width: 250px;
+    max-height: 600px;
+    position: absolute;
+    z-index: 900;
+    top: 100px;
+    left: 50px;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border-radius: 3px;
+    box-shadow: 0 1px 8px 0 rgba(220, 220, 220, 0.8), 0 0 1px 0 rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    .scheduler {
+        &-input {
+            position: relative;
+            border-bottom: 1px solid #dddddd;
+            padding: 8px 10px 8px 13px;
+            align-items: center;
+            input {
+                width: 100%;
+                outline: none;
+                border: none;
+            }
+            .clear {
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                cursor: pointer;
+            }
+        }
+        &-preview {
+            display: flex;
+            flex-direction: column;
+            border-bottom: 1px solid #ddd;
+            padding: 8px 10px;
+            font-size: 14px;
+        }
+        &-suggestions {
+            display: flex;
+            flex-direction: column;
+            border-bottom: 1px solid #ddd;
+            padding: 8px 10px;
+            font-size: 14px;
+        }
+    }
+}
+.date-picker {
+    .date-picker-btn {
+        display: flex;
+        flex-shrink: 0;
+        align-items: center;
+        color: #555;
+        border-radius: 5px;
+        height: 28px;
+        padding: 0 8px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+        justify-content: space-between;
+        transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        vertical-align: middle;
+        background-color: #fff;
+        &:hover {
+            background-color: #eeeeee;
+        }
+        svg {
+            vertical-align: middle;
+            margin-right: 3px;
+        }
+    }
 }

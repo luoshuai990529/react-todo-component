@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "LewisComponent",
+  "name": "lewis-todo-coponents",
   "version": "1.0.0",
   "scripts": {
     "start": "dumi dev",
