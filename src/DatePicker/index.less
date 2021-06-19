@@ -4,8 +4,8 @@
     right: 0;
     bottom: 0;
     left: 0;
-    background-color: black;
-    opacity: .2;
+    // background-color: black;
+    // opacity: 1;
     z-index: 800;
 }
 
@@ -14,8 +14,8 @@
     max-height: 600px;
     position: absolute;
     z-index: 900;
-    top: 100px;
-    left: 50px;
+    // top: 100px;
+    // left: 50px;
     display: flex;
     flex-direction: column;
     background-color: #fff;
@@ -41,7 +41,10 @@
                 cursor: pointer;
             }
         }
-        &-preview {
+        &-preview,
+        &-suggestions,
+        &-date-picker,
+        &-footer {
             display: flex;
             flex-direction: column;
             border-bottom: 1px solid #ddd;
@@ -49,11 +52,77 @@
             font-size: 14px;
         }
         &-suggestions {
-            display: flex;
-            flex-direction: column;
-            border-bottom: 1px solid #ddd;
-            padding: 8px 10px;
-            font-size: 14px;
+        }
+        &-date-picker {
+            &-header {
+                display: flex;
+                padding-left: 5px;
+                justify-content: space-between;
+                .month {
+                    font-weight: 700;
+                    font-size: 13px;
+                    line-height: 28px;
+                }
+                .actions {
+                    button {
+                        outline: none;
+                        border: none;
+                        cursor: pointer;
+                        background-color: transparent;
+                        color: grey;
+                        margin: 0;
+                        padding: 0;
+                        height: 24px;
+                        &:hover {
+                            background-color: #f1f1f1;
+                            color: #272727;
+                            .outline-circle {
+                                border-color: #272727;
+                            }
+                        }
+                        > div {
+                            width: 24px;
+                            line-height: 24px;
+                            .outline-circle {
+                                width: 6px;
+                                height: 6px;
+                                border-radius: 4px;
+                                border: 1px solid grey;
+                                margin: 8px auto;
+                            }
+                        }
+                    }
+                }
+            }
+            &-week {
+                border-bottom: 1px solid #ddd;
+                margin: 0 -10px;
+                .week-labels {
+                    display: flex;
+                    padding: 0 10px;
+                    font-size: 10px;
+                    color: grey;
+                    > div {
+                        line-height: 24px;
+                        width: 14.28571%;
+                        text-align: center;
+                    }
+                }
+            }
+            &-day {
+                height: 180px;
+                overflow-y: auto;
+                padding-right: 17px;
+                &::-webkit-scrollbar {
+                    width: 0;
+                    display: none;
+                }
+                .content {
+                    height: 300px;
+                }
+            }
+        }
+        &-footer {
         }
     }
 }
