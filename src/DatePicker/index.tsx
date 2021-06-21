@@ -2,18 +2,22 @@ import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import './index.less';
 import DateSvg from './svg/dateSvg';
-import PickerContent from './pickerContent';
+import PickerContent from './components/pickerContent';
 
 type ContextType = { pickerLeft: number; pickerTop: number };
 export const AppContext = React.createContext<ContextType>({ pickerLeft: 0, pickerTop: 0 });
 const { Provider } = AppContext;
 
-interface PropsType {}
+interface PropsType {
+    defaultText?: string;
+    onSave: (v: string) => string | void;
+}
 interface ModalProps {
     children: React.ReactNode;
 }
 
 export default function DatePicker(props: PropsType) {
+    const { defaultText, onSave } = props;
     const [isOpen, setIsOpen] = useState(false);
     const [pickerLeft, setPickerLeft] = useState<number>(0);
     const [pickerTop, setPickerTop] = useState<number>(0);
@@ -45,17 +49,22 @@ export default function DatePicker(props: PropsType) {
         setIsOpen(true);
     };
 
+    const btnTextRender = () => {
+        const result = defaultText ? defaultText : '日程安排';
+        return result;
+    };
+
     return (
         <div className="date-picker">
             <Provider value={{ pickerLeft, pickerTop }}>
                 {isOpen && (
                     <Modal>
-                        <PickerContent />
+                        <PickerContent setIsOpen={setIsOpen} onSave={onSave} />
                     </Modal>
                 )}
                 <button className="date-picker-btn" onClick={openPickeHandle}>
                     <DateSvg />
-                    日程安排
+                    {btnTextRender()}
                 </button>
             </Provider>
         </div>
