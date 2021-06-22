@@ -59,6 +59,8 @@ export const MatchingTypes = [
     'YYYY/MM/DD HH',
     'YYYY/MM/DD HH:mm',
     'YYYY/MM/DD HH:mm',
+    '明天 HH:mm',
+    '今天 HH:mm',
 ];
 
 export default dayjs;

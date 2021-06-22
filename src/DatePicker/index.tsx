@@ -1,13 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import './index.less';
 import DateSvg from './svg/dateSvg';
-import PickerContent from './components/pickerContent';
-
-type ContextType = { pickerLeft: number; pickerTop: number };
-export const AppContext = React.createContext<ContextType>({ pickerLeft: 0, pickerTop: 0 });
-const { Provider } = AppContext;
-
+import PopperContent from './components/popperContent';
+import {} from './components/popperContent';
 interface PropsType {
     defaultText?: string;
     onSave: (v: string) => string | void;
@@ -17,10 +13,12 @@ interface ModalProps {
 }
 
 export default function DatePicker(props: PropsType) {
+    const btnRef = useRef(null);
     const { defaultText, onSave } = props;
     const [isOpen, setIsOpen] = useState(false);
     const [pickerLeft, setPickerLeft] = useState<number>(0);
     const [pickerTop, setPickerTop] = useState<number>(0);
+    const [scheduleTime, setScheduleTime] = useState('');
     useEffect(() => {}, []);
 
     const Modal = (props: ModalProps) => {
@@ -54,19 +52,20 @@ export default function DatePicker(props: PropsType) {
         return result;
     };
 
+    const getScheduleTime = (v: string) => {
+        setScheduleTime(v);
+    };
     return (
         <div className="date-picker">
-            <Provider value={{ pickerLeft, pickerTop }}>
-                {isOpen && (
-                    <Modal>
-                        <PickerContent setIsOpen={setIsOpen} onSave={onSave} />
-                    </Modal>
-                )}
-                <button className="date-picker-btn" onClick={openPickeHandle}>
-                    <DateSvg />
-                    {btnTextRender()}
-                </button>
-            </Provider>
+            {isOpen && (
+                <Modal>
+                    <PopperContent {...{ pickerLeft, pickerTop, btnRef, scheduleTime }} getScheduleTime={getScheduleTime} setIsOpen={setIsOpen} onSave={onSave} />
+                </Modal>
+            )}
+            <button className="date-picker-btn" onClick={openPickeHandle} ref={btnRef}>
+                <DateSvg />
+                {scheduleTime ? scheduleTime : btnTextRender()}
+            </button>
         </div>
     );
 }

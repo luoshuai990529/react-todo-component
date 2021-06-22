@@ -29,8 +29,13 @@ export default function FilterResult(props: PropsType) {
 
     return (
         <div className="scheduler-preview">
-            {formatTimeStr(scheduleTime) && <div className="date-result">{formatTimeStr(scheduleTime)}</div>}
-            <div className="tips">您可以输入 例：2021-05-29 15:00 或者 2021年5月29日 15:00 以及此类时间格式的内容来指定截止时间</div>
+            {formatTimeStr(scheduleTime) && (
+                <React.Fragment>
+                    <div className="date-result">{formatTimeStr(scheduleTime)}</div>
+                    <div className="task-tips">没有任务</div>
+                </React.Fragment>
+            )}
+            {!formatTimeStr(scheduleTime) && <div className="tips">您可以输入 例：2021-05-29 15:00 或者 2021年5月29日 15:00 以及此类时间格式的内容来指定截止时间</div>}
         </div>
     );
 }

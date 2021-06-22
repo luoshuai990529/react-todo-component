@@ -59,6 +59,10 @@
                 font-weight: 600;
                 cursor: pointer;
             }
+            .task-tips {
+                color: #999;
+                font-size: 10px;
+            }
             .tips {
                 margin-bottom: 8px;
                 color: #999;
@@ -66,6 +70,46 @@
             }
         }
         &-suggestions {
+            padding: 5px 0;
+            .suggestions-item {
+                display: flex;
+                align-items: center;
+                outline: none;
+                border: none;
+                padding: 4px 10px;
+                background-color: transparent;
+                vertical-align: middle;
+                cursor: pointer;
+                &:hover {
+                    background-color: #f3f3f3;
+                }
+                .item-icon {
+                    margin-right: 10px;
+                }
+                .item-label {
+                    vertical-align: middle;
+                }
+                .item-week {
+                    margin-left: auto;
+                    color: grey;
+                    font-size: 12px;
+                }
+                &.today {
+                    .item-icon {
+                        color: #058527;
+                    }
+                }
+                &.tomorrow {
+                    .item-icon {
+                        color: #bc7e2e;
+                    }
+                }
+                &.sunday {
+                    .item-icon {
+                        color: #246fe0;
+                    }
+                }
+            }
         }
         &-date-picker {
             &-header {
@@ -124,7 +168,7 @@
                 }
             }
             &-day {
-                height: 180px;
+                height: 175px;
                 overflow-y: auto;
                 &::-webkit-scrollbar {
                     width: 0;
@@ -136,6 +180,23 @@
             }
         }
         &-footer {
+            justify-content: flex-end;
+            flex-direction: row;
+            padding: 0;
+            .left {
+            }
+            .right {
+                width: 50px;
+                outline: none;
+                border: none;
+                background-color: #fff;
+                font-weight: 600;
+                line-height: 30px;
+                cursor: pointer;
+                &.disable {
+                    color: rgb(197, 197, 197);
+                }
+            }
         }
     }
 }
