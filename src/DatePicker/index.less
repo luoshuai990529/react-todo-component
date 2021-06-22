@@ -85,6 +85,7 @@
                 }
                 .item-icon {
                     margin-right: 10px;
+                    height: 24px;
                 }
                 .item-label {
                     vertical-align: middle;
@@ -107,6 +108,11 @@
                 &.sunday {
                     .item-icon {
                         color: #246fe0;
+                    }
+                }
+                &.none {
+                    .item-icon {
+                        color: #878787;
                     }
                 }
             }
@@ -167,8 +173,8 @@
                     }
                 }
             }
-            &-day {
-                height: 175px;
+            &-content {
+                height: 180px;
                 overflow-y: auto;
                 &::-webkit-scrollbar {
                     width: 0;
