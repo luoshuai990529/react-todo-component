@@ -3,6 +3,7 @@ import dayjs, { parseTime2Week } from '../utils/dayjs';
 import TodaySvg from '../svg/todaySvg';
 import TomorrowSvg from '../svg/tomorrowSvg';
 import SundaySvg from '../svg/SundaySvg';
+import NoneSvg from '../svg/noneSvg';
 
 interface PropsType {
     onSave: (x: string) => void;
@@ -32,6 +33,13 @@ export default function suggestOpts(props: PropsType) {
                 </div>
                 <div className="item-label">周日</div>
                 <div className="item-week">{dayjs().day(0).add(1, 'w').format('MM月DD日')}</div>
+            </button>
+            <button className="suggestions-item none" onClick={() => props.onSave('')}>
+                <div className="item-icon">
+                    <NoneSvg />
+                </div>
+                <div className="item-label">没有日期</div>
+                <div className="item-week"></div>
             </button>
         </div>
     );
