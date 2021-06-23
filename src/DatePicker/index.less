@@ -137,7 +137,13 @@
                         margin: 0;
                         padding: 0;
                         height: 24px;
-                        &:hover {
+                        &.disable {
+                            color: #d8d8d8;
+                            .outline-circle {
+                                border-color: #d8d8d8;
+                            }
+                        }
+                        &.btn:hover {
                             background-color: #f1f1f1;
                             color: #272727;
                             .outline-circle {
