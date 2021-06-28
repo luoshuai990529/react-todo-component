@@ -2,8 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import './index.less';
 import DateSvg from './svg/dateSvg';
-import PopperContent from './components/popperContent';
-import {} from './components/popperContent';
+import PopperContent from './PopperContent';
 interface PropsType {
     defaultText?: string;
     onSave: (v: string) => string | void;
@@ -16,8 +15,8 @@ export default function DatePicker(props: PropsType) {
     const btnRef = useRef(null);
     const { defaultText, onSave } = props;
     const [isOpen, setIsOpen] = useState(false);
-    const [pickerLeft, setPickerLeft] = useState<number>(0);
-    const [pickerTop, setPickerTop] = useState<number>(0);
+    const [pickerLeft, setPickerLeft] = useState<number>(-1);
+    const [pickerTop, setPickerTop] = useState<number>(-1);
     const [scheduleTime, setScheduleTime] = useState('');
     useEffect(() => {}, []);
 
