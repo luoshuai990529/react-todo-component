@@ -50,7 +50,7 @@ export default function PickerModal(props: PropsType) {
             pickerLeft - 250 > 0 ? (translateX = pickerLeft - 250) : (translateX = pickerLeft + btnWidth);
             translateY = pickerTop - 100 > 0 ? 10 : pickerTop;
             if (pickerTop > 400) {
-                translateY = 110;
+                translateY = pickerTop - 400;
             }
         } else {
             translateX = pickerLeft;
