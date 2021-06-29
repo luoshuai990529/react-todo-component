@@ -1,23 +1,25 @@
 import React, { useEffect, useState, useRef } from 'react';
 import LeftSvg from './svg/leftSvg';
 import RightSvg from './svg/rightSvg';
-import dayjs from './utils/dayjs';
+import dayjs, { parseNumber2List } from './utils/dayjs';
 import { List, AutoSizer, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
+import { DateItem } from './index';
+import { Dayjs } from 'dayjs';
 const cache = new CellMeasurerCache({ defaultHeight: 205, fixedWidth: true });
-interface PropsType {}
+interface PropsType {
+    dateList: Array<DateItem>;
+}
 const nowTime = dayjs();
-export default function DatePicker(props: PropsType) {
-    const dateContentRef = useRef<HTMLDivElement>(null);
+function DatePicker(props: PropsType) {
+    const ListRef = useRef(null);
+    const dateContentRef = useRef(null);
     const [headerDate, setHeaderDate] = useState(dayjs());
+    const [scrollToIndex, setScrollToIndex] = useState(0);
+    const [currentIndex, setCurrentIndex] = useState(0);
+
     useEffect(() => {
-        console.log(`当前${headerDate.format('M月')}月份有${headerDate.daysInMonth()}天`);
-        const dateContentEle = dateContentRef.current;
-        if (dateContentEle) {
-            dateContentEle.addEventListener('scroll', () => {
-                console.log('111');
-            });
-        }
-    }, [headerDate]);
+        console.log('DatePicker useEffect');
+    }, []);
 
     const nextMonth = () => {
         const nextMonth = headerDate.add(1, 'month');
@@ -34,23 +36,53 @@ export default function DatePicker(props: PropsType) {
         if (headerDate === dayjs()) return;
         setHeaderDate(dayjs());
     };
-    const MonthListRender = () => {
-        const arr = [1, 2, 3, 4, 5, 6, 7];
+
+    // 判断元素是否在可见范围内
+    const elementIsVisibleInViewport = (el: any, parent: any) => {
+        const { bottom } = el.getBoundingClientRect();
+        const { top: parentTop, bottom: parentBottom } = parent.getBoundingClientRect();
+        const isVisible = bottom > 0 && bottom > parentTop + 5 && bottom < parentBottom;
+        return isVisible;
+    };
+    const onScroll = () => {
+        const dateDom = dateContentRef.current;
+        // @ts-ignore
+        dateDom && dateDom.timeId && clearTimeout(dateDom.timeId);
+
+        if (dateDom) {
+            // @ts-ignore
+            dateDom.timeId = setTimeout(() => {
+                const dateList = document.querySelectorAll('.ReactVirtualized__Grid__innerScrollContainer>div');
+                const visibleList = [...dateList].filter((item) => {
+                    const bol = elementIsVisibleInViewport(item, dateDom);
+                    return bol;
+                });
+                if (visibleList[0]) {
+                    const dataIndex = visibleList[0].getAttribute('data-index');
+                    if (dataIndex) {
+                        const index = parseInt(dataIndex);
+                        console.log('当前展示的item:', visibleList[0]);
+                        setCurrentIndex(index);
+                    }
+                }
+            }, 40);
+        }
+    };
+
+    // isScrolling, // The List is currently being scrolled
+    // isVisible, // This row is visible within the List (eg it is not an overscanned row)
+    const _rowRenderer = ({ key, index, parent, style }: { key: any; index: number; parent: any; style: any }) => {
+        const time = props.dateList[index].time;
+        const dayCounts = props.dateList[index].days;
         return (
-            <React.Fragment>
-                {arr.map((item, key) => (
-                    <div key={key} className="data-picker-month">
-                        <div className="date-picker-month-header">{5 + item}月</div>
-                        <div className="calendar">
-                            <div className="calendar-week">1 2 3 4</div>
-                            <div className="calendar-week">5 6 7 8 9 10 11</div>
-                            <div className="calendar-week">12 13 14 15 16 17 18</div>
-                            <div className="calendar-week">19 20 21 22 23 24 25</div>
-                            <div className="calendar-week">26 27 28 29 30 31</div>
-                        </div>
+            <CellMeasurer cache={cache} columnIndex={0} key={key} parent={parent} rowIndex={index}>
+                <div style={{ ...style }} data-index={index}>
+                    {time.format('YYYYMMDD') !== dayjs().format('YYYYMMDD') && <p className="date-desc">{time.format('M月')}</p>}
+                    <div className="calendar">
+                        <RenderCalendarWeeks dayCounts={dayCounts} time={time} />
                     </div>
-                ))}
-            </React.Fragment>
+                </div>
+            </CellMeasurer>
         );
     };
     return (
@@ -83,8 +115,45 @@ export default function DatePicker(props: PropsType) {
                 </div>
             </div>
             <div className="scheduler-date-picker-content" ref={dateContentRef}>
-                {MonthListRender()}
+                <AutoSizer disableHeight>
+                    {({ width }) => (
+                        <List
+                            ref={ListRef}
+                            scrollToAlignment="start"
+                            height={180}
+                            overscanRowCount={10}
+                            rowCount={props.dateList.length}
+                            rowHeight={cache.rowHeight}
+                            rowRenderer={_rowRenderer}
+                            scrollToIndex={scrollToIndex}
+                            width={width}
+                            onScroll={onScroll}
+                        />
+                    )}
+                </AutoSizer>
             </div>
         </div>
     );
 }
+
+const RenderCalendarWeeks = (props: { dayCounts: number; time: Dayjs }) => {
+    const { dayCounts, time } = props;
+    console.log('==================RenderCalendarWeeks');
+    // let dateInfo: any ;
+    let dateInfo: any = parseNumber2List(dayCounts, time);
+
+    let ReactNodeList = [];
+    for (const key in dateInfo) {
+        ReactNodeList.push(
+            <div key={key} className="calendar-weeks">
+                {dateInfo[key].map((item: { day: number; week: number }, index: number) => (
+                    <button key={index}>
+                        <span className="circle">{item.day && <span>{item.day}</span>}</span>
+                    </button>
+                ))}
+            </div>,
+        );
+    }
+    return <React.Fragment>{ReactNodeList.map((item) => item)}</React.Fragment>;
+};
+export default React.memo(DatePicker);

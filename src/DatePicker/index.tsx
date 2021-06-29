@@ -1,8 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import './index.less';
+import dayjs from './utils/dayjs';
+import produce from 'immer';
 import DateSvg from './svg/dateSvg';
 import PopperContent from './PopperContent';
+import { Dayjs } from 'dayjs';
 interface PropsType {
     defaultText?: string;
     onSave: (v: string) => string | void;
@@ -10,7 +13,10 @@ interface PropsType {
 interface ModalProps {
     children: React.ReactNode;
 }
-
+export interface DateItem {
+    time: Dayjs;
+    days: number;
+}
 export default function DatePicker(props: PropsType) {
     const btnRef = useRef(null);
     const { defaultText, onSave } = props;
@@ -18,7 +24,18 @@ export default function DatePicker(props: PropsType) {
     const [pickerLeft, setPickerLeft] = useState<number>(-1);
     const [pickerTop, setPickerTop] = useState<number>(-1);
     const [scheduleTime, setScheduleTime] = useState('');
-    useEffect(() => {}, []);
+    const [dateList, setDateList] = useState<Array<DateItem>>([]);
+    useEffect(() => {
+        const nextList = produce(dateList, (draftState: Array<DateItem>) => {
+            for (let i = 0; i < 600; i++) {
+                const current = dayjs().add(i, 'M');
+                draftState.push({ time: current, days: current.daysInMonth() });
+            }
+        });
+        console.log('nextList-------', nextList);
+
+        setDateList(nextList);
+    }, []);
 
     const Modal = (props: ModalProps) => {
         const body = document.querySelector('body');
@@ -58,7 +75,7 @@ export default function DatePicker(props: PropsType) {
         <div className="date-picker">
             {isOpen && (
                 <Modal>
-                    <PopperContent {...{ pickerLeft, pickerTop, btnRef, scheduleTime }} getScheduleTime={getScheduleTime} setIsOpen={setIsOpen} onSave={onSave} />
+                    <PopperContent {...{ pickerLeft, pickerTop, btnRef, scheduleTime, dateList }} getScheduleTime={getScheduleTime} setIsOpen={setIsOpen} onSave={onSave} />
                 </Modal>
             )}
             <button className="date-picker-btn" onClick={openPickeHandle} ref={btnRef}>

@@ -6,6 +6,7 @@ import TomorrowSvg from './svg/tomorrowSvg';
 import SundaySvg from './svg/SundaySvg';
 import NoneSvg from './svg/noneSvg';
 import { useImmer } from 'use-immer';
+import type { DateItem } from './index';
 import dayjs, { MatchingTypes, parseTime2Week } from './utils/dayjs';
 const widowWidth = document.body.clientWidth;
 const widowHeight = document.body.clientHeight;
@@ -15,6 +16,7 @@ interface PropsType {
     pickerTop: number;
     btnRef: React.ReactNode;
     scheduleTime: string;
+    dateList: Array<DateItem>;
     onSave: (x: string) => void;
     setIsOpen: (x: boolean) => void;
     getScheduleTime: (x: string) => void;
@@ -173,7 +175,7 @@ export default function PickerModal(props: PropsType) {
                                 <div className="item-week"></div>
                             </button>
                         </div>
-                        <DatePicker />
+                        <DatePicker dateList={props.dateList} />
                         <div className="scheduler-footer">
                             <button
                                 className={!scheduleTime ? 'right disable' : 'right'}
