@@ -180,7 +180,7 @@
                 }
             }
             &-content {
-                height: 180px;
+                height: 185px;
                 overflow-y: auto;
                 .ReactVirtualized__List {
                     &::-webkit-scrollbar {
@@ -213,17 +213,52 @@
                             font-size: 13px;
                             color: #202020;
                             text-decoration: none;
-                            cursor: pointer;
                             background-color: transparent;
                             padding: 0;
                             margin: 0;
                             .circle {
+                                cursor: pointer;
                                 width: 24px;
                                 height: 24px;
                                 border-radius: 12px;
                                 transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                                > span {
+                                    padding-bottom: 2px;
+                                }
                                 &:hover {
                                     background-color: #f1f1f1;
+                                    color: #202020;
+                                }
+                                &.weekend {
+                                    color: #8b8b8b;
+                                    &:hover {
+                                        background-color: #f1f1f1;
+                                        color: #202020;
+                                    }
+                                }
+                                &.today {
+                                    font-weight: 700;
+                                }
+                                &.active {
+                                    position: relative;
+                                    color: #fff;
+                                    background-color: #dd4b39;
+                                    font-weight: 700;
+                                    &::before {
+                                        content: '';
+                                        background-color: #fff;
+                                        position: absolute;
+                                        bottom: 2px;
+                                        left: 50%;
+                                        width: 3px;
+                                        height: 3px;
+                                        margin-left: -1.5px;
+                                        border-radius: 1.5px;
+                                    }
+                                    &:hover {
+                                        background-color: #dd4b39;
+                                        color: #fff;
+                                    }
                                 }
                             }
                         }

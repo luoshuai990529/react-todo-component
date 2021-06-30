@@ -73,6 +73,7 @@ export const parseNumber2List = (n: number, dateTime: Dayjs) => {
     let weekMapList = {};
     // @ts-ignore
     weekMapList[week] = [];
+    //对长度不满7位的进行填充
     const fillArray = () => {
         // @ts-ignore
         if (weekMapList[week].length !== 7) {
@@ -81,20 +82,28 @@ export const parseNumber2List = (n: number, dateTime: Dayjs) => {
             fillArray();
         }
     };
-    for (let i = 1; i < n + 1; i++) {
-        const timeValue = dateTime.format('YYYY年M月') + i + '日';
-        const matchVal = dayjs(timeValue, MatchingTypes, 'es', true);
-        // @ts-ignore
-        weekMapList[week].push({ day: i, week: matchVal.day() });
-
-        if ((matchVal.day() === 0 && week === 0) || i === n) fillArray();
-
-        if (matchVal.day() === 0) {
-            week++;
+    const loopFormatData = (isToday: boolean) => {
+        for (let i = 1; i < n + 1; i++) {
+            const timeValue = dateTime.format('YYYY年M月') + i + '日';
+            const matchVal = dayjs(timeValue, MatchingTypes, 'es', true);
+            const flag = isToday ? dayjs().date() > i : false;
             // @ts-ignore
-            weekMapList[week] = [];
+            flag ? weekMapList[week].push('') : weekMapList[week].push({ day: i, week: matchVal.day() });
+            if ((matchVal.day() === 0 && week === 0) || i === n) fillArray();
+
+            if (matchVal.day() === 0) {
+                week++;
+                // @ts-ignore
+                weekMapList[week] = [];
+            }
         }
+    };
+    if (dateTime.format('YYYYMM') === dayjs().format('YYYYMM')) {
+        loopFormatData(true);
+    } else {
+        loopFormatData(false);
     }
+
     return weekMapList;
 };
 

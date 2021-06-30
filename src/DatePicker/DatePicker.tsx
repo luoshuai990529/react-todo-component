@@ -5,36 +5,55 @@ import dayjs, { parseNumber2List } from './utils/dayjs';
 import { List, AutoSizer, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
 import { DateItem } from './index';
 import { Dayjs } from 'dayjs';
+import classNames from 'classnames';
 const cache = new CellMeasurerCache({ defaultHeight: 205, fixedWidth: true });
 interface PropsType {
+    scheduleTime: string;
     dateList: Array<DateItem>;
+    selectDate: (date: string) => void;
 }
-const nowTime = dayjs();
+function MemoHoc(Component: any) {
+    return React.memo(Component);
+}
 function DatePicker(props: PropsType) {
     const ListRef = useRef(null);
     const dateContentRef = useRef(null);
-    const [headerDate, setHeaderDate] = useState(dayjs());
+    const [headerDate, setHeaderDate] = useState<Dayjs>(dayjs());
     const [scrollToIndex, setScrollToIndex] = useState(0);
     const [currentIndex, setCurrentIndex] = useState(0);
 
     useEffect(() => {
-        console.log('DatePicker useEffect');
+        // ListRef.current.selectedTime = props.scheduleTime
+        if (props.scheduleTime) {
+            const yeardif = dayjs(props.scheduleTime).year() - dayjs().year();
+            const mounthdif = dayjs(props.scheduleTime).month() - dayjs().month();
+            const index = yeardif * 12 + mounthdif;
+            setCurrentIndex(index);
+            setScrollToIndex(index);
+        }
     }, []);
-
+    // 下一个月
     const nextMonth = () => {
-        const nextMonth = headerDate.add(1, 'month');
-        setHeaderDate(nextMonth);
+        setCurrentIndex(currentIndex + 1);
+        setScrollToIndex(currentIndex + 1);
     };
+    // 上一个月
     const lastMonth = () => {
-        const lastMonth = headerDate.subtract(1, 'month');
-        if (lastMonth.isBefore(dayjs().subtract(1, 'month'))) {
+        if (headerDate.format('YYYYMMDD') === dayjs().format('YYYYMMDD')) {
             return;
         }
-        setHeaderDate(lastMonth);
+        // setHeaderDate(lastMonth);
+        setCurrentIndex(currentIndex - 1);
+        setScrollToIndex(currentIndex - 1);
     };
+    // 回到当前月
     const backNowMonth = () => {
-        if (headerDate === dayjs()) return;
-        setHeaderDate(dayjs());
+        if (headerDate.format('YYYYMMDD') === dayjs().format('YYYYMMDD')) {
+            return;
+        }
+        // setHeaderDate(dayjs());
+        setCurrentIndex(0);
+        setScrollToIndex(0);
     };
 
     // 判断元素是否在可见范围内
@@ -61,11 +80,12 @@ function DatePicker(props: PropsType) {
                     const dataIndex = visibleList[0].getAttribute('data-index');
                     if (dataIndex) {
                         const index = parseInt(dataIndex);
-                        console.log('当前展示的item:', visibleList[0]);
+                        // console.log('当前展示的item:', visibleList[0]);
                         setCurrentIndex(index);
+                        setHeaderDate(dayjs().add(index, 'M'));
                     }
                 }
-            }, 40);
+            }, 50);
         }
     };
 
@@ -74,12 +94,13 @@ function DatePicker(props: PropsType) {
     const _rowRenderer = ({ key, index, parent, style }: { key: any; index: number; parent: any; style: any }) => {
         const time = props.dateList[index].time;
         const dayCounts = props.dateList[index].days;
+        const dateInfo = props.dateList[index].dateInfo;
         return (
             <CellMeasurer cache={cache} columnIndex={0} key={key} parent={parent} rowIndex={index}>
                 <div style={{ ...style }} data-index={index}>
                     {time.format('YYYYMMDD') !== dayjs().format('YYYYMMDD') && <p className="date-desc">{time.format('M月')}</p>}
                     <div className="calendar">
-                        <RenderCalendarWeeks dayCounts={dayCounts} time={time} />
+                        <RenderCalendarWeeks selectDate={props.selectDate} dayCounts={dayCounts} time={time} dateInfos={dateInfo} scheduleTime={props.scheduleTime} />
                     </div>
                 </div>
             </CellMeasurer>
@@ -90,10 +111,10 @@ function DatePicker(props: PropsType) {
             <div className="scheduler-date-picker-header">
                 <div className="month">{headerDate.format('M月 YYYY')}</div>
                 <div className="actions">
-                    <button onClick={lastMonth} className={headerDate.subtract(1, 'month').isBefore(dayjs().subtract(1, 'month')) ? 'disable' : 'btn'}>
+                    <button onClick={lastMonth} className={headerDate.format('YYYYMMDD') === dayjs().format('YYYYMMDD') ? 'disable' : 'btn'}>
                         <LeftSvg />
                     </button>
-                    <button onClick={backNowMonth} className={headerDate.subtract(1, 'month').isBefore(dayjs().subtract(1, 'month')) ? 'disable' : 'btn'}>
+                    <button onClick={backNowMonth} className={headerDate.format('YYYYMMDD') === dayjs().format('YYYYMMDD') ? 'disable' : 'btn'}>
                         <div>
                             <div className="outline-circle"></div>
                         </div>
@@ -120,8 +141,8 @@ function DatePicker(props: PropsType) {
                         <List
                             ref={ListRef}
                             scrollToAlignment="start"
-                            height={180}
-                            overscanRowCount={10}
+                            height={185}
+                            overscanRowCount={3}
                             rowCount={props.dateList.length}
                             rowHeight={cache.rowHeight}
                             rowRenderer={_rowRenderer}
@@ -136,24 +157,42 @@ function DatePicker(props: PropsType) {
     );
 }
 
-const RenderCalendarWeeks = (props: { dayCounts: number; time: Dayjs }) => {
-    const { dayCounts, time } = props;
-    console.log('==================RenderCalendarWeeks');
+/**
+ *  渲染每一行日期 对应 星期数
+ */
+const RenderCalendarWeeks = MemoHoc((props: { dayCounts: number; time: Dayjs; dateInfos?: any; selectDate: (date: string) => void; scheduleTime: string }) => {
+    const { dayCounts, time, dateInfos, selectDate, scheduleTime } = props;
     // let dateInfo: any ;
-    let dateInfo: any = parseNumber2List(dayCounts, time);
+    let dateInfo: any = dateInfos ? dateInfos : parseNumber2List(dayCounts, time);
 
     let ReactNodeList = [];
+    const selectHandle = (time: Dayjs, day: number) => {
+        const date = `${time.format('YYYY年M月')}${day}日`;
+        selectDate(date);
+    };
     for (const key in dateInfo) {
         ReactNodeList.push(
             <div key={key} className="calendar-weeks">
-                {dateInfo[key].map((item: { day: number; week: number }, index: number) => (
-                    <button key={index}>
-                        <span className="circle">{item.day && <span>{item.day}</span>}</span>
-                    </button>
-                ))}
+                {dateInfo[key].map((item: { day: number; week: number }, index: number) => {
+                    const spanClass = classNames('circle', {
+                        weekend: item.week === 0 || item.week === 6,
+                        today: time.format('YYYYMM') === dayjs().format('YYYYMM') && item.day === dayjs().date(),
+                        active: dayjs(scheduleTime).format('YYYYMM') === time.format('YYYYMM') && item.day === dayjs(scheduleTime).date(),
+                    });
+                    return (
+                        <button key={index}>
+                            {item.day && (
+                                <span className={spanClass} onClick={() => selectHandle(time, item.day)}>
+                                    <span>{item.day}</span>
+                                </span>
+                            )}
+                        </button>
+                    );
+                })}
             </div>,
         );
     }
     return <React.Fragment>{ReactNodeList.map((item) => item)}</React.Fragment>;
-};
+});
+
 export default React.memo(DatePicker);

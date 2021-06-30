@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import './index.less';
-import dayjs from './utils/dayjs';
+import dayjs, { parseNumber2List } from './utils/dayjs';
 import produce from 'immer';
 import DateSvg from './svg/dateSvg';
 import PopperContent from './PopperContent';
@@ -16,6 +16,7 @@ interface ModalProps {
 export interface DateItem {
     time: Dayjs;
     days: number;
+    dateInfo?: any;
 }
 export default function DatePicker(props: PropsType) {
     const btnRef = useRef(null);
@@ -29,11 +30,14 @@ export default function DatePicker(props: PropsType) {
         const nextList = produce(dateList, (draftState: Array<DateItem>) => {
             for (let i = 0; i < 600; i++) {
                 const current = dayjs().add(i, 'M');
-                draftState.push({ time: current, days: current.daysInMonth() });
+                if (i < 15) {
+                    // 提前处理dateInfo数据
+                    draftState.push({ time: current, days: current.daysInMonth(), dateInfo: parseNumber2List(current.daysInMonth(), current) });
+                } else {
+                    draftState.push({ time: current, days: current.daysInMonth() });
+                }
             }
         });
-        console.log('nextList-------', nextList);
-
         setDateList(nextList);
     }, []);
 

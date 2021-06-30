@@ -115,11 +115,20 @@ export default function PickerModal(props: PropsType) {
         const str = scheduleTime ? time.format('YYYY年MM月DD日') + ` ${time2}` : '';
         return str;
     };
-
+    const clickSave = () => {
+        if (!scheduleTime) {
+            return;
+        }
+        onSave(scheduleTime);
+    };
     const onSave = (x: string) => {
         props.onSave(x);
         props.setIsOpen(false);
         props.getScheduleTime(x);
+    };
+
+    const selectDate = (date: string) => {
+        console.log('date-', date);
     };
     return (
         <React.Fragment>
@@ -175,17 +184,9 @@ export default function PickerModal(props: PropsType) {
                                 <div className="item-week"></div>
                             </button>
                         </div>
-                        <DatePicker dateList={props.dateList} />
+                        <DatePicker scheduleTime={props.scheduleTime} selectDate={selectDate} dateList={props.dateList} />
                         <div className="scheduler-footer">
-                            <button
-                                className={!scheduleTime ? 'right disable' : 'right'}
-                                onClick={() => {
-                                    if (!scheduleTime) {
-                                        return;
-                                    }
-                                    onSave(scheduleTime);
-                                }}
-                            >
+                            <button className={!scheduleTime ? 'right disable' : 'right'} onClick={clickSave}>
                                 保存
                             </button>
                         </div>
