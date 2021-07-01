@@ -292,23 +292,36 @@
         display: flex;
         flex-shrink: 0;
         align-items: center;
-        color: #555;
-        border-radius: 5px;
         height: 28px;
         padding: 0 8px;
-        border: 1px solid #ccc;
         box-sizing: border-box;
         justify-content: space-between;
         transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         cursor: pointer;
         vertical-align: middle;
         background-color: #fff;
-        &:hover {
-            background-color: #eeeeee;
-        }
+        color: #808080;
+
         svg {
             vertical-align: middle;
             margin-right: 3px;
+        }
+        > span {
+            vertical-align: middle;
+            font-size: 14px;
+        }
+        &.default {
+            color: #555;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            &:hover {
+                background-color: #eeeeee;
+            }
+        }
+        &.simple {
+            border: none;
+            outline: none;
+            background-color: transparent;
         }
     }
 }

@@ -3,10 +3,15 @@ import calendar from 'dayjs/plugin/calendar';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import isBetween from 'dayjs/plugin/isBetween';
 dayjs.extend(calendar);
 dayjs.extend(customParseFormat);
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
+dayjs.extend(isBetween);
+
+export const TOMORROW = dayjs().add(1, 'd').format('YYYY-MM-DD');
+export const TODAY = dayjs().format('YYYY-MM-DD');
 
 export const parseTime2Week = (time: Dayjs) => {
     switch (time.day()) {

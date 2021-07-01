@@ -16,14 +16,14 @@ function MemoHoc(Component: any) {
     return React.memo(Component);
 }
 function DatePicker(props: PropsType) {
+    const initHeaderDate = props.scheduleTime ? dayjs(props.scheduleTime) : dayjs();
     const ListRef = useRef(null);
     const dateContentRef = useRef(null);
-    const [headerDate, setHeaderDate] = useState<Dayjs>(dayjs());
+    const [headerDate, setHeaderDate] = useState<Dayjs>(initHeaderDate);
     const [scrollToIndex, setScrollToIndex] = useState(0);
     const [currentIndex, setCurrentIndex] = useState(0);
 
     useEffect(() => {
-        // ListRef.current.selectedTime = props.scheduleTime
         if (props.scheduleTime) {
             const yeardif = dayjs(props.scheduleTime).year() - dayjs().year();
             const mounthdif = dayjs(props.scheduleTime).month() - dayjs().month();
@@ -32,12 +32,13 @@ function DatePicker(props: PropsType) {
             setScrollToIndex(index);
         }
     }, []);
-    // 下一个月
+
+    // next month
     const nextMonth = () => {
         setCurrentIndex(currentIndex + 1);
         setScrollToIndex(currentIndex + 1);
     };
-    // 上一个月
+    // last month
     const lastMonth = () => {
         if (headerDate.format('YYYYMMDD') === dayjs().format('YYYYMMDD')) {
             return;
@@ -46,17 +47,19 @@ function DatePicker(props: PropsType) {
         setCurrentIndex(currentIndex - 1);
         setScrollToIndex(currentIndex - 1);
     };
-    // 回到当前月
+    // back current month
     const backNowMonth = () => {
         if (headerDate.format('YYYYMMDD') === dayjs().format('YYYYMMDD')) {
             return;
         }
         // setHeaderDate(dayjs());
         setCurrentIndex(0);
-        setScrollToIndex(0);
+        // setScrollToIndex(0);
+        // @ts-ignore
+        ListRef.current.scrollToRow(0);
     };
 
-    // 判断元素是否在可见范围内
+    // Determines if the element is in the visible range
     const elementIsVisibleInViewport = (el: any, parent: any) => {
         const { bottom } = el.getBoundingClientRect();
         const { top: parentTop, bottom: parentBottom } = parent.getBoundingClientRect();
@@ -89,8 +92,6 @@ function DatePicker(props: PropsType) {
         }
     };
 
-    // isScrolling, // The List is currently being scrolled
-    // isVisible, // This row is visible within the List (eg it is not an overscanned row)
     const _rowRenderer = ({ key, index, parent, style }: { key: any; index: number; parent: any; style: any }) => {
         const time = props.dateList[index].time;
         const dayCounts = props.dateList[index].days;
@@ -111,10 +112,10 @@ function DatePicker(props: PropsType) {
             <div className="scheduler-date-picker-header">
                 <div className="month">{headerDate.format('M月 YYYY')}</div>
                 <div className="actions">
-                    <button onClick={lastMonth} className={headerDate.format('YYYYMMDD') === dayjs().format('YYYYMMDD') ? 'disable' : 'btn'}>
+                    <button onClick={lastMonth} className={headerDate.format('YYYYMM') === dayjs().format('YYYYMM') ? 'disable' : 'btn'}>
                         <LeftSvg />
                     </button>
-                    <button onClick={backNowMonth} className={headerDate.format('YYYYMMDD') === dayjs().format('YYYYMMDD') ? 'disable' : 'btn'}>
+                    <button onClick={backNowMonth} className={headerDate.format('YYYYMM') === dayjs().format('YYYYMM') ? 'disable' : 'btn'}>
                         <div>
                             <div className="outline-circle"></div>
                         </div>
