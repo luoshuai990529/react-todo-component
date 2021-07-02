@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import ReactDOM from 'react-dom';
 import './index.less';
-import dayjs, { parseNumber2List, TODAY, TOMORROW, parseTime2Week } from './utils/dayjs';
+import dayjs, { parseNumber2List, isToday, isTomorrow, parseTime2Week } from './utils/dayjs';
 import produce from 'immer';
 import DateSvg from './svg/dateSvg';
 import PopperContent from './PopperContent';
@@ -31,11 +31,11 @@ export default function DatePicker(props: PropsType) {
     const [scheduleTime, setScheduleTime] = useState('');
     const [dateList, setDateList] = useState<Array<DateItem>>([]);
     useEffect(() => {
-        console.log('开始渲染');
-        initDateList();
-        console.log('渲染完毕');
+        setTimeout(() => {
+            initDateList();
+        }, 0);
     }, []);
-
+    // 初始化日历列表
     const initDateList = useMemo(
         () => () => {
             const nextList = produce(dateList, (draftState: Array<DateItem>) => {
@@ -55,7 +55,7 @@ export default function DatePicker(props: PropsType) {
         },
         [],
     );
-
+    // 将节点渲染到指定节点中
     const Modal = (props: ModalProps) => {
         const body = document.querySelector('body');
         const popperOverlay = document.createElement('div');
@@ -81,16 +81,22 @@ export default function DatePicker(props: PropsType) {
         setPickerTop(pickerEleTop);
         setIsOpen(true);
     };
-
+    // 判断某个时间是否在本周内
+    const isBetweenWeek = useMemo(
+        () => (scheduleTime: string) => {
+            const days = dayjs().day() ? 7 - dayjs().day() : 0;
+            return dayjs(scheduleTime).isBetween(dayjs(), dayjs().add(days, 'd'));
+        },
+        [],
+    );
     const btnTextRender = (scheduleTime: string) => {
         let result = defaultText ? defaultText : '日程安排';
         if (scheduleTime) {
-            const days = dayjs().day() ? 7 - dayjs().day() : 0;
-            const showWeek = dayjs(scheduleTime).isBetween(dayjs(), dayjs().add(days, 'd'));
-            if (dayjs(scheduleTime).format('YYYY-MM-DD') === TOMORROW) {
+            const showWeek = isBetweenWeek(scheduleTime);
+            if (isTomorrow(scheduleTime)) {
                 return '明天';
             }
-            if (dayjs(scheduleTime).format('YYYY-MM-DD') === TODAY) {
+            if (isToday(scheduleTime)) {
                 return '今天';
             }
             const formatTime = dayjs(scheduleTime).year() === dayjs().year() ? dayjs(scheduleTime).format('M月D日 HH:ss') : dayjs(scheduleTime).format('YYYY年M月D日 HH:ss');
@@ -111,7 +117,15 @@ export default function DatePicker(props: PropsType) {
                     <PopperContent {...{ pickerLeft, pickerTop, btnRef, scheduleTime, dateList, ...props }} getScheduleTime={getScheduleTime} setIsOpen={setIsOpen} onSave={onSave} />
                 </Modal>
             )}
-            <button className={classnames('date-picker-btn', props.btnType ? props.btnType : 'default')} onClick={openPickeHandle} ref={btnRef}>
+            <button
+                className={classnames('date-picker-btn', props.btnType ? props.btnType : 'default', {
+                    tomorrow: isTomorrow(scheduleTime),
+                    today: isToday(scheduleTime),
+                    betweenWeek: isBetweenWeek(scheduleTime),
+                })}
+                onClick={openPickeHandle}
+                ref={btnRef}
+            >
                 <DateSvg />
                 {useMemo(
                     () => (

@@ -7,7 +7,7 @@ import SundaySvg from './svg/SundaySvg';
 import NoneSvg from './svg/noneSvg';
 import { useImmer } from 'use-immer';
 import type { DateItem } from './index';
-import dayjs, { MatchingTypes, parseTime2Week, TOMORROW, TODAY } from './utils/dayjs';
+import dayjs, { MatchingTypes, parseTime2Week, TODAY, isToday, isTomorrow } from './utils/dayjs';
 import { Dayjs } from 'dayjs';
 const widowWidth = document.body.clientWidth;
 const widowHeight = document.body.clientHeight;
@@ -119,10 +119,10 @@ export default function PickerModal(props: PropsType) {
         () => (scheduleTime: string) => {
             const time = dayjs(scheduleTime);
             let time2 = parseTime2Week(time);
-            if (time.format('YYYY-MM-DD') === TODAY) {
+            if (isToday(time)) {
                 time2 = '今天';
             }
-            if (time.format('YYYY-MM-DD') === TOMORROW) {
+            if (isTomorrow(time)) {
                 time2 = '明天';
             }
             const str = scheduleTime ? time.format('YYYY年MM月DD日') + ` ${time2}` : '';

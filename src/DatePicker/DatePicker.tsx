@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import LeftSvg from './svg/leftSvg';
 import RightSvg from './svg/rightSvg';
-import dayjs, { parseNumber2List } from './utils/dayjs';
+import dayjs, { parseNumber2List, isToday } from './utils/dayjs';
 import { List, AutoSizer, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
 import { DateItem } from './index';
 import { Dayjs } from 'dayjs';
@@ -40,7 +40,7 @@ function DatePicker(props: PropsType) {
     };
     // last month
     const lastMonth = () => {
-        if (headerDate.format('YYYYMMDD') === dayjs().format('YYYYMMDD')) {
+        if (isToday(headerDate)) {
             return;
         }
         // setHeaderDate(lastMonth);
@@ -49,7 +49,7 @@ function DatePicker(props: PropsType) {
     };
     // back current month
     const backNowMonth = () => {
-        if (headerDate.format('YYYYMMDD') === dayjs().format('YYYYMMDD')) {
+        if (isToday(headerDate)) {
             return;
         }
         // setHeaderDate(dayjs());
@@ -99,7 +99,7 @@ function DatePicker(props: PropsType) {
         return (
             <CellMeasurer cache={cache} columnIndex={0} key={key} parent={parent} rowIndex={index}>
                 <div style={{ ...style }} data-index={index}>
-                    {time.format('YYYYMMDD') !== dayjs().format('YYYYMMDD') && <p className="date-desc">{time.format('M月')}</p>}
+                    {!isToday(time) && <p className="date-desc">{time.format('M月')}</p>}
                     <div className="calendar">
                         <RenderCalendarWeeks selectDate={props.selectDate} dayCounts={dayCounts} time={time} dateInfos={dateInfo} scheduleTime={props.scheduleTime} />
                     </div>
@@ -112,10 +112,10 @@ function DatePicker(props: PropsType) {
             <div className="scheduler-date-picker-header">
                 <div className="month">{headerDate.format('M月 YYYY')}</div>
                 <div className="actions">
-                    <button onClick={lastMonth} className={headerDate.format('YYYYMM') === dayjs().format('YYYYMM') ? 'disable' : 'btn'}>
+                    <button onClick={lastMonth} className={headerDate.isSame(dayjs(), 'month') ? 'disable' : 'btn'}>
                         <LeftSvg />
                     </button>
-                    <button onClick={backNowMonth} className={headerDate.format('YYYYMM') === dayjs().format('YYYYMM') ? 'disable' : 'btn'}>
+                    <button onClick={backNowMonth} className={headerDate.isSame(dayjs(), 'month') ? 'disable' : 'btn'}>
                         <div>
                             <div className="outline-circle"></div>
                         </div>
@@ -177,8 +177,8 @@ const RenderCalendarWeeks = MemoHoc((props: { dayCounts: number; time: Dayjs; da
                 {dateInfo[key].map((item: { day: number; week: number }, index: number) => {
                     const spanClass = classNames('circle', {
                         weekend: item.week === 0 || item.week === 6,
-                        today: time.format('YYYYMM') === dayjs().format('YYYYMM') && item.day === dayjs().date(),
-                        active: dayjs(scheduleTime).format('YYYYMM') === time.format('YYYYMM') && item.day === dayjs(scheduleTime).date(),
+                        today: time.isSame(dayjs(), 'month') && item.day === dayjs().date(),
+                        active: dayjs(scheduleTime).isSame(time, 'month') && item.day === dayjs(scheduleTime).date(),
                     });
                     return (
                         <button key={index}>

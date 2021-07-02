@@ -1,4 +1,4 @@
-# LewisComponent
+# Lewis Luo
 
 ## Getting Started
 

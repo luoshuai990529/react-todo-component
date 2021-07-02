@@ -1,6 +1,8 @@
 ## DatePicker
 
-Demo1:
+> 日期选择组件
+
+**有边框按钮 Demo1:**
 
 ```tsx
 import React, { useState } from 'react';
@@ -13,40 +15,44 @@ export default () => {
         setDateTime(v);
     };
     return (
-        <div style={{ height: '240px', postion: 'relative' }}>
+        <div style={{ height: '180px', postion: 'relative' }}>
             <h3>date的值:{dateTime}</h3>
-            <DatePicker onSave={saveDateHandle} />
             <DatePicker onSave={saveDateHandle} />
         </div>
     );
 };
 ```
 
-Demo2:
+**有默认值的无边框 Demo2:**
 
 ```tsx
 import React, { useState } from 'react';
 import DatePicker from './index.tsx';
 
 export default () => {
-    const [value, setValue] = useState('');
     const [dateTime, setDateTime] = useState('2021-08-25 00:00');
-    const [show, setShow] = useState(false);
     const saveDateHandle = (v) => {
         setDateTime(v);
     };
-    const clickHandle = () => {
-        setShow(!show);
-    };
     return (
-        <div style={{ height: '240px', postion: 'relative' }}>
-            <h3>自定义DatePicker显示文案：</h3>
+        <div style={{ height: '180px', postion: 'relative' }}>
             <h3>date的值:{dateTime}</h3>
-            <button onClick={clickHandle}>toggle</button>
-            {show && <DatePicker value={dateTime} tipsRender={'没有任务'} btnType="simple" defaultText={'截止日期'} onSave={saveDateHandle} />}
+            <DatePicker value={dateTime} tipsRender={'这是日期下面的tips'} btnType="simple" defaultText={'截止日期'} onSave={saveDateHandle} />
         </div>
     );
 };
 ```
+
+---
+
+### API
+
+| 参数        | 描述                       | 类型                    | 可选 | 默认值  |
+| ----------- | -------------------------- | ----------------------- | ---- | ------- |
+| value       | 日期选择器绑定值           | string                  | 是   | 无      |
+| onSave      | 选择日期后的回调           | `(value:string)=>void`  | 是   | 无      |
+| tipsRender  | 匹配日期下的 tips 提示文案 | ReactNode               | 是   | 无      |
+| btnType     | 按钮类型                   | `'simple' \| 'default'` | 是   | default |
+| defaultText | 默认按钮显示文案           | string                  | 是   | 无      |
 
 <!-- More skills for writing demo: https://d.umijs.org/guide/demo-principle -->

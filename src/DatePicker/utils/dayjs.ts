@@ -13,6 +13,17 @@ dayjs.extend(isBetween);
 export const TOMORROW = dayjs().add(1, 'd').format('YYYY-MM-DD');
 export const TODAY = dayjs().format('YYYY-MM-DD');
 
+// 判断当前时间是否是今天
+export function isToday(time: Dayjs | string) {
+    const date = typeof time === 'string' ? dayjs(time) : time;
+    return date.format('YYYY-MM-DD') === TODAY;
+}
+// 判断当前时间是否是明天
+export function isTomorrow(time: Dayjs | string) {
+    const date = typeof time === 'string' ? dayjs(time) : time;
+    return date.format('YYYY-MM-DD') === TOMORROW;
+}
+// 通过日期获取星期
 export const parseTime2Week = (time: Dayjs) => {
     switch (time.day()) {
         case 1:
@@ -72,7 +83,7 @@ export const MatchingTypes = [
     '明天 HH:mm',
     '今天 HH:mm',
 ];
-
+// 通过时间和每月天数处理数据
 export const parseNumber2List = (n: number, dateTime: Dayjs) => {
     let week = 0;
     let weekMapList = {};
