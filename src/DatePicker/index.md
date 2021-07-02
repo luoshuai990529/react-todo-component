@@ -2,7 +2,7 @@
 
 > 日期选择组件
 
-**有边框按钮 Demo1:**
+### 默认按钮类型
 
 ```tsx
 import React, { useState } from 'react';
@@ -23,7 +23,7 @@ export default () => {
 };
 ```
 
-**有默认值的无边框 Demo2:**
+### 有默认值的无边框按钮类型
 
 ```tsx
 import React, { useState } from 'react';
