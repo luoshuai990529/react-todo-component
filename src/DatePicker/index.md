@@ -17,7 +17,10 @@ export default () => {
     return (
         <div style={{ height: '180px', postion: 'relative' }}>
             <h3>date的值:{dateTime}</h3>
-            <DatePicker onSave={saveDateHandle} />
+            <div>
+                <p style={{ margin: '0' }}>今天看完《小灰的漫画算法》第一章</p>
+                <DatePicker style={{ marginTop: '10px' }} onSave={saveDateHandle} />
+            </div>
         </div>
     );
 };
@@ -49,6 +52,7 @@ export default () => {
 
 | 参数        | 描述                       | 类型                    | 可选 | 默认值  |
 | ----------- | -------------------------- | ----------------------- | ---- | ------- |
+| style       | 样式                       | object                  | 是   | 无      |
 | value       | 日期选择器绑定值           | string                  | 是   | 无      |
 | onSave      | 选择日期后的回调           | `(value:string)=>void`  | 是   | 无      |
 | tipsRender  | 匹配日期下的 tips 提示文案 | ReactNode               | 是   | 无      |

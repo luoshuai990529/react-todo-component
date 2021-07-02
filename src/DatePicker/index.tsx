@@ -13,6 +13,7 @@ interface PropsType {
     tipsRender?: React.ReactNode;
     value?: Date | string | Dayjs;
     btnType?: 'default' | 'simple';
+    style?: object;
 }
 interface ModalProps {
     children: React.ReactNode;
@@ -26,8 +27,6 @@ export default function DatePicker(props: PropsType) {
     const btnRef = useRef(null);
     const { defaultText, onSave } = props;
     const [isOpen, setIsOpen] = useState(false);
-    const [pickerLeft, setPickerLeft] = useState<number>(-1);
-    const [pickerTop, setPickerTop] = useState<number>(-1);
     const [scheduleTime, setScheduleTime] = useState('');
     const [dateList, setDateList] = useState<Array<DateItem>>([]);
     useEffect(() => {
@@ -75,10 +74,12 @@ export default function DatePicker(props: PropsType) {
     };
 
     const openPickeHandle = (e: any) => {
-        const pickerEleTop = e.currentTarget.getBoundingClientRect().top;
-        const pickerEleLeft = e.currentTarget.offsetLeft;
-        setPickerLeft(pickerEleLeft);
-        setPickerTop(pickerEleTop);
+        const btnDom: any = btnRef.current;
+        if (btnDom) {
+            btnDom.topDif = e.currentTarget.getBoundingClientRect().top;
+            btnDom.leftDif = e.currentTarget.getBoundingClientRect().left;
+        }
+        // @ts-ignore
         setIsOpen(true);
     };
     // 判断某个时间是否在本周内
@@ -111,10 +112,10 @@ export default function DatePicker(props: PropsType) {
         setScheduleTime(v);
     };
     return (
-        <div className="date-picker">
+        <div style={{ ...props.style }} className="date-picker">
             {isOpen && (
                 <Modal>
-                    <PopperContent {...{ pickerLeft, pickerTop, btnRef, scheduleTime, dateList, ...props }} getScheduleTime={getScheduleTime} setIsOpen={setIsOpen} onSave={onSave} />
+                    <PopperContent {...{ btnRef, scheduleTime, dateList, ...props }} getScheduleTime={getScheduleTime} setIsOpen={setIsOpen} onSave={onSave} />
                 </Modal>
             )}
             <button

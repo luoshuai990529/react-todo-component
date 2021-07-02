@@ -2,26 +2,25 @@
 
 ## Getting Started
 
-Install dependencies,
+> **文档预览地址：https://luoshuai990529.github.io/react-todo-component/**
 
 ```bash
-$ npm i
+$ npm i lewis-todo-coponents
+or
+$ yarn add lewis-todo-coponents
 ```
 
-Start the dev server,
+##### 使用
 
-```bash
-$ npm start
-```
+```tsx
+import React, { useState } from 'react';
+import { DatePicker } from 'lewis-todo-coponents';
 
-Build documentation,
-
-```bash
-$ npm run docs:build
-```
-
-Build library via `father-build`,
-
-```bash
-$ npm run build
+export default () => {
+    return (
+        <div>
+            <DatePicker onSave={saveDateHandle} />
+        </div>
+    );
+};
 ```

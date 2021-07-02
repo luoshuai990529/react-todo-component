@@ -10,12 +10,9 @@ import type { DateItem } from './index';
 import dayjs, { MatchingTypes, parseTime2Week, TODAY, isToday, isTomorrow } from './utils/dayjs';
 import { Dayjs } from 'dayjs';
 const widowWidth = document.body.clientWidth;
-const widowHeight = document.body.clientHeight;
 
 interface PropsType {
-    pickerLeft: number;
-    pickerTop: number;
-    btnRef: React.ReactNode;
+    btnRef: any;
     scheduleTime: string;
     dateList: Array<DateItem>;
     onSave?: (x: string) => void;
@@ -51,14 +48,15 @@ export default function PickerModal(props: PropsType) {
      *
      * */
     const initPickerPosition = () => {
-        const { pickerLeft, pickerTop, btnRef } = props;
+        const { btnRef } = props;
+        const pickerTop = btnRef.current.topDif;
+        const pickerLeft = btnRef.current.leftDif;
         let translateX: number;
         let translateY: number;
         //@ts-ignore
         const btnWidth = btnRef.current.clientWidth + 3;
-
         if (widowWidth > 768) {
-            pickerLeft - 250 > 0 ? (translateX = pickerLeft - 250) : (translateX = pickerLeft + btnWidth);
+            translateX = pickerLeft - 250 > 0 ? pickerLeft - 250 : pickerLeft + btnWidth;
             translateY = pickerTop - 100 > 0 ? 10 : pickerTop;
             if (pickerTop > 400) {
                 translateY = pickerTop - 400;
@@ -67,6 +65,7 @@ export default function PickerModal(props: PropsType) {
             translateX = pickerLeft;
             translateY = pickerTop + 32;
         }
+
         setTranslate((draft) => {
             draft.translateX = translateX;
             draft.translateY = translateY;
